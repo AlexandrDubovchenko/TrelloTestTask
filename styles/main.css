@@ -1,0 +1,131 @@
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Columns */
+
+.column {
+  width: 20%;
+}
+.column_content {
+  padding: 5px;
+}
+.column_backlog {
+  background: grey;
+}
+.column_selected {
+  background-color: goldenrod;
+}
+.column_running {
+  background-color: red;
+}
+.column_evaluating {
+  background-color: blue;
+}
+.column_live {
+  background-color: darkgreen;
+}
+
+.column_title {
+  display: flex;
+  justify-content: space-around;
+  color: beige;
+}
+.title_name:first-letter {
+  text-transform: uppercase;
+}
+.button_add {
+  display: block;
+  margin: 0 auto;
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  background-image: url(https://www.pngkey.com/png/detail/4-44913_plus-sign-clipart-blue-plus-sign.png);
+  background-position: center;
+  background-size: cover;
+}
+
+/* /Column */
+
+/* Card */
+
+.card {
+  position: relative;
+  background-color: honeydew;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.card_title {
+  display: flex;
+  font-size: 1.5em;
+}
+
+.card_footer {
+  display: flex;
+}
+
+.edit_button {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background-color: transparent;
+  font-size: 15px;
+}
+
+/* /Card */
+
+/* Editor */
+.editor_wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(200, 100, 100, 0.5);
+}
+
+.editor {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 20%;
+  top: 35%;
+  left: 40%;
+  background-color: honeydew;
+  border-radius: 10px;
+  padding: 20px;
+}
+.editor > ul {
+  align-self: start;
+}
+textarea {
+  width: 100%;
+  height: 5em;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  resize: none;
+}
+.statuses_list  label {
+  display: inline-block;
+}
+.statuses_list  label::first-letter {
+  text-transform: uppercase;
+}
+.editor_button {
+  border: none;
+  border-radius: 20px;
+  background-color: orchid;
+  width: 5em;
+  height: 2em;
+}
+
+/* /Editor */
