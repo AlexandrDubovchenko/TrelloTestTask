@@ -22,7 +22,7 @@ export class Card {
         description: card2.description,
         status: card2.status,
         labels: card2.labels
-      })
+      });      
     }
   }
   render() {

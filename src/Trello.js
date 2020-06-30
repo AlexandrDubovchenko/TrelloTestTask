@@ -28,8 +28,7 @@ export class Trello {
       e.preventDefault();
       editor.onSubmitHandler();
       $editor.remove();
-      this.tasks.push(task);
-      this.rerender();
+      this.fetchRerender();
     })
   }
 
@@ -43,7 +42,17 @@ export class Trello {
       this.tasks = [...this.tasksCopy];
     }
   }
-
+  fetchRerender() {
+    this.root.innerHTML = '';
+    const tasks = [];
+    this.db.collection("tasks").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        tasks.push({ id: doc.id, ...doc.data() });
+      });
+      this.tasks = tasks;
+      this.init();
+    });
+  }
   rerender() {
     this.root.innerHTML = '';
     this.init();
@@ -89,7 +98,7 @@ export class Trello {
           });
           $card.addEventListener('click', (e) => {
             if (e.target.classList.contains('edit_button')) {
-              this.manageEditor(task)
+              this.manageEditor(app, task)
             }
           });
           return $card

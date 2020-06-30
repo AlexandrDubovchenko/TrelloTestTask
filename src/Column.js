@@ -7,8 +7,10 @@ export class Column {
     this.cards = cards;
   }
   dropHandler(column, card) {
+    console.log(card);
+    
     if (card.status !== column) {
-      card.status = column
+      card.status = column;
       this.db.collection("tasks").doc(card.id).set({
         title: card.title,
         description: card.description,

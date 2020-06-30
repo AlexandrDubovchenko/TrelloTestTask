@@ -26,20 +26,19 @@ export class Editor {
   onSubmitHandler() {
     const obj = this.edit();
     [this.task.title, this.task.description, this.task.status, this.task.labels] = [obj.title, obj.description, obj.status, obj.labels];
-    this.task.id ? 
-    this.db.collection("tasks").doc(this.task.id).set({
-      title: obj.title,
-      description: obj.description,
-      status: obj.status,
-      labels: obj.labels
-    }) :
-    this.db.collection("tasks").add({
-      title: obj.title,
-      description: obj.description,
-      status: obj.status,
-      labels: obj.labels
-  }) 
-
+    this.task.id ?
+      this.db.collection("tasks").doc(this.task.id).set({
+        title: obj.title,
+        description: obj.description,
+        status: obj.status,
+        labels: obj.labels
+      }) :
+      this.db.collection("tasks").add({
+        title: obj.title,
+        description: obj.description,
+        status: obj.status,
+        labels: obj.labels
+      })
   }
 
   render() {
@@ -53,8 +52,8 @@ export class Editor {
 
       <textarea name='description' maxlength='200'  placeholder="Описание">${this.task.description || ''}</textarea>
       <ul class='statuses_list'>
-      ${this.statuses.map((el, id) => {       
-        return `<li><input id=${id} name=${'status'} type="radio" value=${el} ${this.task.status === el.toLowerCase()  && 'checked'} required>
+      ${this.statuses.map((el, id) => {
+        return `<li><input id=${id} name=${'status'} type="radio" value=${el} ${this.task.status === el.toLowerCase() && 'checked'} required>
           <label for="${id}">${el}</label>
         </li>`
       }).join('')}
