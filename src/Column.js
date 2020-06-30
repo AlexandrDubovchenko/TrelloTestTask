@@ -6,9 +6,7 @@ export class Column {
     this.title = title;
     this.cards = cards;
   }
-  dropHandler(column, card) {
-    console.log(card);
-    
+  dropHandler(column, card) {    
     if (card.status !== column) {
       card.status = column;
       this.db.collection("tasks").doc(card.id).set({
