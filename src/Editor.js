@@ -1,5 +1,6 @@
 export class Editor {
-  constructor(tasks, task, statuses) {
+  constructor(db, tasks, task, statuses) {
+    this.db = db
     this.tasks = tasks;
     this.task = task;
     this.statuses = statuses;
@@ -19,13 +20,26 @@ export class Editor {
         object[key] = value;
       }
     });
-    console.log(object);
     return object
   }
-  
+
   onSubmitHandler() {
     const obj = this.edit();
     [this.task.title, this.task.description, this.task.status, this.task.labels] = [obj.title, obj.description, obj.status, obj.labels];
+    this.task.id ? 
+    this.db.collection("tasks").doc(this.task.id).set({
+      title: obj.title,
+      description: obj.description,
+      status: obj.status,
+      labels: obj.labels
+    }) :
+    this.db.collection("tasks").add({
+      title: obj.title,
+      description: obj.description,
+      status: obj.status,
+      labels: obj.labels
+  }) 
+
   }
 
   render() {
@@ -39,16 +53,27 @@ export class Editor {
 
       <textarea name='description' maxlength='200'  placeholder="Описание">${this.task.description || ''}</textarea>
       <ul class='statuses_list'>
-      ${this.statuses.map((el, id) => {
-        return `<li><input id=${id} name=${'status'} type="radio" value=${el} ${this.task.status === el} && 'checked'} required>
+      ${this.statuses.map((el, id) => {       
+        return `<li><input id=${id} name=${'status'} type="radio" value=${el} ${this.task.status === el.toLowerCase()  && 'checked'} required>
           <label for="${id}">${el}</label>
         </li>`
       }).join('')}
       </ul>
       <ul class='labels_list'>
-        <li><input name='check_UI design' type="checkbox" ${this.task.labels.find(el => el === 'UI design') && 'checked'}>UI design</li>
-        <li><input name='check_Marketing' type="checkbox" ${this.task.labels.find(el => el === 'Marketing') && 'checked'}>Marketing</li>
-        <li><input name='check_Research' type="checkbox" ${this.task.labels.find(el => el === 'Research') && 'checked'}>Research</li>
+        <li>
+          <input id='design' name='check_UI design' type="checkbox" ${this.task.labels.find(el => el === 'UI design') && 'checked'}>
+          <label for="design">UI design</label>
+        </li>
+        
+        <li>
+          <input id='marketing' name='check_Marketing' type="checkbox" ${this.task.labels.find(el => el === 'Marketing') && 'checked'}>
+          <label for="marketing">Marketing</label>
+        </li>
+        <li>
+          <input id='research' name='check_Research' type="checkbox" ${this.task.labels.find(el => el === 'Research') && 'checked'}>
+          <label for="research">Research</label>
+        </li>
+        
       </ul>
       <button class='editor_button' type="submit">Submit</button>
     `

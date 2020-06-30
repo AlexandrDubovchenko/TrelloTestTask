@@ -1,11 +1,14 @@
 
 .app {
   display: flex;
-  min-height: 100vh;
+  flex-direction: column;
 }
 
 /* Columns */
-
+.column_wrapper {
+  display: flex;
+  min-height: 100vh;
+}
 .column {
   width: 20%;
 }
@@ -78,6 +81,19 @@
   font-size: 15px;
 }
 
+.card_label {
+  padding: 5px;
+  margin-right: 5px;
+}
+.ui_design {
+  background-color: green;
+}
+.marketing {
+  background-color: purple;
+}
+.research {
+  background-color: red;
+}
 /* /Card */
 
 /* Editor */
@@ -97,7 +113,7 @@
   align-items: center;
   box-sizing: border-box;
   width: 20%;
-  top: 35%;
+  top: 20%;
   left: 40%;
   background-color: honeydew;
   border-radius: 10px;
@@ -128,4 +144,46 @@ textarea {
   height: 2em;
 }
 
+.editor ul {
+  list-style-type: none;
+  padding: 0;
+}
+.editor li {
+  padding: 5px;
+}
+
+.labels_list label {
+  display: inline-block;
+}
+  
+
 /* /Editor */
+
+/* Search */
+
+.search input {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 2em;
+}
+.search .search_button {
+  position: absolute;
+  top: 0.1em;
+  right: 15px;
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  background-color: transparent;
+  background-image: url(https://cdn0.iconfinder.com/data/icons/30-hardware-line-icons/64/Search-512.png);
+  background-position: center;
+  background-size: cover;
+}
+
+.search .button_add {
+  position: absolute;
+  top: 0.1em;
+  right: 70px
+}

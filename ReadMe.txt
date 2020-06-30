@@ -1,0 +1,1 @@
+Use command 'npm start' to run app.

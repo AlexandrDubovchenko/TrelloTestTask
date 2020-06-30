@@ -1,13 +1,20 @@
 
 
 export class Column {
-  constructor(title, cards) {
+  constructor(title, cards, db) {
+    this.db = db;
     this.title = title;
     this.cards = cards;
   }
   dropHandler(column, card) {
     if (card.status !== column) {
       card.status = column
+      this.db.collection("tasks").doc(card.id).set({
+        title: card.title,
+        description: card.description,
+        status: card.status,
+        labels: card.labels
+      })
     }
   }
   render() {

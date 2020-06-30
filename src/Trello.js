@@ -1,63 +1,49 @@
 import { Column } from './Column.js';
 import { Card } from './Card.js';
 import { Editor } from './Editor.js';
+import { Search } from './Search.js';
 
 export class Trello {
-  constructor() {
+  constructor(db, tasks) {
+    this.db = db;
     this.columns = ['backlog', 'selected', 'running', 'evaluating', 'live'];
-    this.tasks = [
-      {
-        id: 0,
-        status: 'backlog',
-        title: 'Всплытие идёт с «целевого» элемента прямо наверх. По умолчанию событие будет всплывать до элемента <html>, а затем до объекта document, а иногда даже до window, вызывая все обработчики на своём пути.',
-        description: 'TaTaTa',
-        labels: ['UI design'],
-      },
-      {
-        id: 0,
-        status: 'backlog',
-        title: 'Всплытие идёт с «целевого» элемента прямо наверх. По умолчанию событие будет всплывать до элемента <html>, а затем до объекта document, а иногда даже до window, вызывая все обработчики на своём пути.',
-        description: 'TaTaTa',
-        labels: ['UI design'],
-      },
-      {
-        id: 0,
-        status: 'backlog',
-        title: 'Всплытие идёт с «целевого» элемента прямо наверх. По умолчанию событие будет всплывать до элемента <html>, а затем до объекта document, а иногда даже до window, вызывая все обработчики на своём пути.',
-        description: 'TaTaTa',
-        labels: ['UI design'],
-      },
-      {
-        id: 1,
-        status: 'selected',
-        title: 'blablawadwadwadwa',
-        description: 'TaTaTa',
-        labels: [],
-      },
-
-    ];
+    this.tasks = tasks
+    this.tasksCopy
     this.root = document.querySelector('#root');
     this.app = document.createElement('div');
     this.draggable = '';
   }
 
-
   setDraggble(node) {
     this.draggable = node;
   }
-  manageEditor(task) {
-    const editor = new Editor(this.tasks, task, this.columns);
+
+  manageEditor(task, $button) {
+    const editor = new Editor(this.db, this.tasks, task, this.columns);
     const $editor = editor.render();
     document.body.append($editor);
     $editor.addEventListener('click', (e) => {
+      $button.removeAttribute('disabled');
       e.currentTarget.remove();
     })
     $editor.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
       editor.onSubmitHandler()
       $editor.remove();
+      $button.removeAttribute('disabled');
       this.rerender()
     })
+  }
+
+  renderSearched(searched) {
+    this.tasksCopy = [...this.tasks];
+    this.tasks = searched;
+    this.rerender();
+  }
+  searchCancel() {
+    if (this.tasksCopy.length) {
+      this.tasks = [...this.tasksCopy];
+    }
   }
 
   rerender() {
@@ -69,11 +55,25 @@ export class Trello {
     this.root.append(this.app);
   }
   init() {
+    const search = new Search();
+    const $search = search.render();
+    this.app.append($search);
+    $search.addEventListener('click', (e) => {
+      if (e.target.classList.contains("search_button") && document.querySelector(".search_input").value) {
+        const searched = search.search(this.tasks, document.querySelector(".search_input").value);
+        this.renderSearched(searched);
+        this.searchCancel();
+      } else if (e.target.classList.contains("search_button")) {
+        this.rerender()
+      }
+    });
+    const $columnWrapper = document.createElement('div');
+    $columnWrapper.className = 'column_wrapper';
     this.columns.forEach(title => {
       const cards = this.tasks
         .filter(task => task.status === title)
         .map(task => {
-          const card = new Card(task.title, task.description, task.label);
+          const card = new Card(task.title, task.description, task.labels, this.db);
           const $card = card.render();
           $card.addEventListener('dragstart', (e) => {
             e.stopPropagation()
@@ -83,7 +83,7 @@ export class Trello {
             e.stopPropagation()
             this.setDraggble(null)
           });
-          $card.addEventListener('drop', (e) => {
+          $card.addEventListener('drop', (e) => {           
             e.stopPropagation()
             card.dropHandler(this.tasks, task, this.draggable);
             this.rerender();
@@ -95,16 +95,8 @@ export class Trello {
           });
           return $card
         })
-      const column = new Column(title, cards)
+      const column = new Column(title, cards, this.db)
       const $column = column.render();
-      $column.addEventListener('click', (e) => {
-        if (e.target.classList.contains('button_add')) {
-          const newTask = {};
-          newTask.labels = [];
-          this.tasks.push(newTask);
-          this.manageEditor(newTask)
-        }
-      })
       $column.addEventListener('drop', (e) => {
         column.dropHandler(title, this.draggable)
         this.rerender()
@@ -112,8 +104,23 @@ export class Trello {
       $column.addEventListener('dragover', (e) => {
         e.preventDefault()
       })
-      this.app.append($column)
+      $columnWrapper.append($column)
     })
+    this.app.addEventListener('click', (e) => {
+      if (e.target.classList.contains('button_add')) {        
+        e.target.setAttribute('disabled', true)
+        e.stopPropagation();
+        const newTask = {};
+        newTask.labels = [];        
+        if (e.target.parentNode.classList[1]) {
+          newTask.status = e.target.parentNode.classList[1].split('_')[1];
+        } 
+        
+        this.tasks.push(newTask);
+        this.manageEditor(newTask, e.target)
+      }
+    })
+    this.app.append($columnWrapper);
     this.render()
 
   }
