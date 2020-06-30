@@ -26,12 +26,10 @@ export class Trello {
     })
     $editor.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
-      editor.onSubmitHandler().then(() => {
+      editor.onSubmitHandler()
         $editor.remove();
-        this.fetchRerender();
-      });
-      
-
+        this.tasks.push(task)
+        this.rerender();
     })
   }
 
@@ -45,17 +43,7 @@ export class Trello {
       this.tasks = [...this.tasksCopy];
     }
   }
-  fetchRerender() {
-    this.root.innerHTML = '';
-    const tasks = [];
-    this.db.collection("tasks").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        tasks.push({ id: doc.id, ...doc.data() });
-      });
-      this.tasks = tasks;
-      this.init();
-    });
-  }
+
   rerender() {
     this.root.innerHTML = '';
     this.init();

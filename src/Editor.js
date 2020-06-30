@@ -26,14 +26,10 @@ export class Editor {
   onSubmitHandler() {
     const obj = this.edit();
     [this.task.title, this.task.description, this.task.status, this.task.labels] = [obj.title, obj.description, obj.status, obj.labels];
-    return this.task.id ?
+     if (!this.task.id) {
+      this.task.id = '' + Date.now();
+     } 
       this.db.collection("tasks").doc(this.task.id).set({
-        title: obj.title,
-        description: obj.description,
-        status: obj.status,
-        labels: obj.labels
-      }) :
-      this.db.collection("tasks").add({
         title: obj.title,
         description: obj.description,
         status: obj.status,
