@@ -10,7 +10,6 @@ export class Trello {
     this.tasks = tasks
     this.tasksCopy
     this.root = document.querySelector('#root');
-    this.app = document.createElement('div');
     this.draggable = '';
   }
 
@@ -18,10 +17,10 @@ export class Trello {
     this.draggable = node;
   }
 
-  manageEditor(task) {
+  manageEditor(app, task) {
     const editor = new Editor(this.db, this.tasks, task, this.columns);
     const $editor = editor.render();
-    this.app.append($editor);
+    app.append($editor);
     $editor.addEventListener('click', (e) => {
       $editor.remove();
     })
@@ -45,17 +44,18 @@ export class Trello {
   }
 
   rerender() {
-    this.app.innerHTML = '';
+    this.root.innerHTML = '';
     this.init();
   }
-  render() {
-    this.app.className = 'app'
-    this.root.append(this.app);
+  render(app) {
+    this.root.append(app);
   }
   init() {
+    const app = document.createElement('div');
+    app.className = 'app'
     const search = new Search();
     const $search = search.render();
-    this.app.append($search);
+    app.append($search);
     $search.addEventListener('click', (e) => {
       if (e.target.classList.contains("search_button") && document.querySelector(".search_input").value) {
         const searched = search.search(this.tasks, document.querySelector(".search_input").value);
@@ -104,19 +104,18 @@ export class Trello {
       })
       $columnWrapper.append($column)
     })
-    this.app.addEventListener('click', (e) => {
-      if (e.target.classList.contains('button_add')) {        
+    app.addEventListener('click', (e) => {
+      if (e.target.classList.contains('button_add')) {    
         const newTask = {};
         newTask.labels = [];        
         if (e.target.parentNode.classList[1]) {
           newTask.status = e.target.parentNode.classList[1].split('_')[1];
         }
         this.tasks.push(newTask);
-        this.manageEditor(newTask)
+        this.manageEditor(app, newTask)
       }
     })
-    this.app.append($columnWrapper);
-    this.render()
-
+    app.append($columnWrapper);
+    this.render(app);
   }
 }
