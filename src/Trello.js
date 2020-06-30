@@ -28,6 +28,7 @@ export class Trello {
       e.preventDefault();
       editor.onSubmitHandler();
       $editor.remove();
+      this.tasks.push(task);
       this.rerender();
     })
   }
@@ -111,7 +112,6 @@ export class Trello {
         if (e.target.parentNode.classList[1]) {
           newTask.status = e.target.parentNode.classList[1].split('_')[1];
         }
-        this.tasks.push(newTask);
         this.manageEditor(app, newTask)
       }
     })
