@@ -2,6 +2,7 @@
 .app {
   display: flex;
   flex-direction: column;
+  max-width: 100vw;
 }
 
 /* Columns */
@@ -165,7 +166,8 @@ textarea {
   position: relative;
   display: block;
   width: 100%;
-  height: 2em;
+  height: 2.4em;
+  box-sizing: border-box;
 }
 .search .search_button {
   position: absolute;
