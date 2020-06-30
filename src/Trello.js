@@ -18,18 +18,16 @@ export class Trello {
     this.draggable = node;
   }
 
-  manageEditor(task, $button) {
+  manageEditor(task) {
     const editor = new Editor(this.db, this.tasks, task, this.columns);
     const $editor = editor.render();
     this.app.append($editor);
     $editor.addEventListener('click', (e) => {
-      $button.removeAttribute('disabled');
       $editor.remove();
     })
     $editor.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
       editor.onSubmitHandler();
-      $button.removeAttribute('disabled');
       $editor.remove();
       this.rerender();
     })
@@ -108,14 +106,13 @@ export class Trello {
     })
     this.app.addEventListener('click', (e) => {
       if (e.target.classList.contains('button_add')) {        
-        e.target.setAttribute('disabled', true)
         const newTask = {};
         newTask.labels = [];        
         if (e.target.parentNode.classList[1]) {
           newTask.status = e.target.parentNode.classList[1].split('_')[1];
         }
         this.tasks.push(newTask);
-        this.manageEditor(newTask, e.target)
+        this.manageEditor(newTask)
       }
     })
     this.app.append($columnWrapper);
