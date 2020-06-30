@@ -7,8 +7,8 @@ export class Trello {
   constructor(db, tasks) {
     this.db = db;
     this.columns = ['backlog', 'selected', 'running', 'evaluating', 'live'];
-    this.tasks = tasks
-    this.tasksCopy
+    this.tasks = tasks;
+    this.tasksCopy;
     this.root = document.querySelector('#root');
     this.draggable = '';
   }
@@ -26,9 +26,12 @@ export class Trello {
     })
     $editor.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
-      editor.onSubmitHandler();
-      $editor.remove();
-      this.fetchRerender();
+      editor.onSubmitHandler().then(() => {
+        $editor.remove();
+        this.fetchRerender();
+      });
+      
+
     })
   }
 
@@ -62,7 +65,7 @@ export class Trello {
   }
   init() {
     const app = document.createElement('div');
-    app.className = 'app'
+    app.className = 'app';
     const search = new Search();
     const $search = search.render();
     app.append($search);
@@ -72,7 +75,7 @@ export class Trello {
         this.renderSearched(searched);
         this.searchCancel();
       } else if (e.target.classList.contains("search_button")) {
-        this.rerender()
+        this.rerender();
       }
     });
     const $columnWrapper = document.createElement('div');
@@ -84,15 +87,15 @@ export class Trello {
           const card = new Card(task.title, task.description, task.labels, this.db);
           const $card = card.render();
           $card.addEventListener('dragstart', (e) => {
-            e.stopPropagation()
-            this.setDraggble(task)
+            e.stopPropagation();
+            this.setDraggble(task);
           });
           $card.addEventListener('dragend', (e) => {
-            e.stopPropagation()
-            this.setDraggble(null)
+            e.stopPropagation();
+            this.setDraggble(null);
           });
-          $card.addEventListener('drop', (e) => {           
-            e.stopPropagation()
+          $card.addEventListener('drop', (e) => {
+            e.stopPropagation();
             card.dropHandler(this.tasks, task, this.draggable);
             this.rerender();
           });
@@ -103,25 +106,25 @@ export class Trello {
           });
           return $card
         })
-      const column = new Column(title, cards, this.db)
+      const column = new Column(title, cards, this.db);
       const $column = column.render();
       $column.addEventListener('drop', (e) => {
-        column.dropHandler(title, this.draggable)
-        this.rerender()
+        column.dropHandler(title, this.draggable);
+        this.rerender();
       })
       $column.addEventListener('dragover', (e) => {
-        e.preventDefault()
+        e.preventDefault();
       })
-      $columnWrapper.append($column)
+      $columnWrapper.append($column);
     })
     app.addEventListener('click', (e) => {
-      if (e.target.classList.contains('button_add')) {    
+      if (e.target.classList.contains('button_add')) {
         const newTask = {};
-        newTask.labels = [];        
+        newTask.labels = [];
         if (e.target.parentNode.classList[1]) {
           newTask.status = e.target.parentNode.classList[1].split('_')[1];
         }
-        this.manageEditor(app, newTask)
+        this.manageEditor(app, newTask);
       }
     })
     app.append($columnWrapper);
